@@ -168,6 +168,17 @@ function PROMPT:Visible(visible)
     end
 end
 
+
+--- @param group PromptGroup
+--- Don't use
+function PROMPT:SetGroup(group)
+    if type(group) ~= "number" then
+        print('Group must be a number')
+        return
+    end
+    PromptSetGroup(self.Handle, group)
+end
+
 --- Sets the prompt's text
 --- @param text string | nil The text to set on this prompt
 --- @return text | nil
