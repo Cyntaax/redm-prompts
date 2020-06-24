@@ -6,6 +6,8 @@ PROMPTGROUP.__call = function()
     return "PROMPTGROUP"
 end
 
+GroupCache = {}
+
 function PROMPTGROUP.new(text)
     local ID = GetRandomIntInRange(0, 0xffffff)
 
@@ -15,8 +17,9 @@ function PROMPTGROUP.new(text)
         _Text = text,
         Prompts = {},
     }
-
-    return setmetatable(_PROMPTGROUP, PROMPTGROUP)
+    local mt = setmetatable(_PROMPTGROUP, PROMPTGROUP)
+    table.insert(GroupCache, mt)
+    return mt
 end
 
 --- Sets or return the prompt's text
@@ -35,11 +38,15 @@ end
 function PROMPTGROUP:ShowThisFrame()
     local GroupName = CreateVarString(10, 'LITERAL_STRING', self:Text())
     PromptSetActiveGroupThisFrame(self.ID, GroupName)
-
     for k,v in pairs(self.Prompts) do
-        if PromptHasHoldModeCompleted(v.Handle) then
-            v.HoldCompleted()
-            Wait(100)
+        if v._Hold == true then
+            if PromptHasHoldModeCompleted(v.Handle) then
+                v.HoldCompleted()
+            end
+        else
+            if IsControlJustReleased(0, v._Control) then
+                v.HoldCompleted()
+            end
         end
     end
 end
@@ -98,6 +105,14 @@ function CreatePromptGroup(text)
     return PROMPTGROUP.new(text)
 end
 
+AddEventHandler('onResourceStop', function(resource)
+    if resource == GetcurrentResourceName() then
+        for k,v in pairs(GroupCache) do
+            v:HideAll()
+        end
+    end
+end)
+
 ---------------------------------------------------------------------
 ---------------------------------------------------------------------
 ---------------------------------------------------------------------
@@ -132,6 +147,8 @@ function PROMPT.new(text, control, hold, group)
         Handle = prompt,
         _Enabled = false,
         _Visible = false,
+        _Control = control,
+        _Hold = hold,
         _Text = text,
         HoldCompleted = function()
 
