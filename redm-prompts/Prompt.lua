@@ -106,7 +106,7 @@ function CreatePromptGroup(text)
 end
 
 AddEventHandler('onResourceStop', function(resource)
-    if resource == GetcurrentResourceName() then
+    if resource == GetCurrentResourceName() then
         for k,v in pairs(GroupCache) do
             v:HideAll()
         end
