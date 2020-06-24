@@ -5,7 +5,9 @@ This is just a little something to help make prompts easier to manage in RedM.
 
 It **only** supports *prompt groups* for the time being, but you can still have just one prompt in a group
 
-The **3<sup>rd</sup>** parameter of `CreatePrompt` should always be true for the time being until "tap" prompts are implemented.
+~~The **3<sup>rd</sup>** parameter of `CreatePrompt` should always be true for the time being until "tap" prompts are implemented.~~
+
+"Tap" prompts are now supports. Just specify `false` for hold. The `HoldCompleted` action will be fired when the appropriate control is released.
 
 Usage:
 
